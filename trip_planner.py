@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from portia import Portia, DefaultToolRegistry, LLMProvider, Config, default_config
+from portia import Portia, DefaultToolRegistry, LLMProvider, Config
 from portia.cli import CLIExecutionHooks
 from portia.end_user import EndUser
 
@@ -28,17 +28,15 @@ def get_criteria() -> str:
     trip_plan_budget = input("Please enter Trip Budget (Default is I am Rich): ") or "Any"
     trip_plan_dates = input("Please enter Trip Dates [ e.g.: 2025-Sep-20 to 2025-Sep-22 ] (Default is Any): ") or "Any near future"
     trip_interests = input("Please enter Trip Interests [ e.g.: Adventure, Culture, Food, Nature ] (Default is Any): ") or "Any"
-    receipient_email = input("Please enter One Receipient Email* (Mandatory) : ") or "saurabhram9000@gmail.com"
+    receipient_email = input("Please enter One Receipient Email* (Mandatory) : ")
 
     criteria = "Create a detailed trip plan for the country {country} with {state} state, {budget} budget, {dates} dates and {interests} interests and then format in a nice email and add regards with the name '{name}' and email it to '{email}'.".format(country=trip_plan_country, state=trip_plan_state, budget=trip_plan_budget, dates=trip_plan_dates, interests=trip_interests, name=trip_planner, email=receipient_email)
     return criteria
 
-if __name__ == "__main__":
+plan = portia.plan(query="""{criteria}""".format(criteria=get_criteria()))
 
-    plan = portia.plan(query="""{criteria}""".format(criteria=get_criteria()), end_user=end_user)
+input(f"{plan.model_dump_json(indent=2)}")
 
-    input(f"{plan.model_dump_json(indent=2)}")
+plan_run = portia.run_plan(plan)
 
-    plan_run = portia.run_plan(plan, end_user=end_user)
-
-    print(f"{plan_run.model_dump_json(indent=2)}")
+print(f"{plan_run.model_dump_json(indent=2)}")
